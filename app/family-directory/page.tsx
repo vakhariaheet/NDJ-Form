@@ -58,10 +58,9 @@ export default function FamilyDirectoryPage() {
         .select('*')
 
       if (membersError) throw membersError
-
-      const familiesWithMembers = familiesData.map((family: any) => ({
+      const familiesWithMembers = familiesData.map((family) => ({
         ...family,
-        members: membersData.filter((member: any) => member.family_id === family.id)
+        members: membersData.filter((member) => member.family_id === family.id)
       }))
 
       setFamilies(familiesWithMembers)

@@ -441,7 +441,11 @@ export default function FamilyDirectoryForm({ initialData, onSuccess }: FamilyDi
                 </CardFooter>
               </Card>
             ))}
-            <Button type="button" variant="outline" onClick={() => append({ relation: '', maritalStatus: '', marriedToOtherSamaj: false })}>
+            <Button type="button" variant="outline" onClick={() => append({
+              relation: '', maritalStatus: '', marriedToOtherSamaj: false,
+              
+              
+             } as any)}>
               Add Another Member
             </Button>
           </div>
