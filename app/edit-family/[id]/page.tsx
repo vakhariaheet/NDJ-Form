@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import FamilyDirectoryForm from '@/components/family-directory-form'
 import { supabase } from '@/lib/supabase'
-// @typescript-eslint/no-explicit-any
-export default function EditFamilyPage({ params }:any) {
+
+export default function EditFamilyPage({ params }: any) {
   const [familyData, setFamilyData] = useState(null)
   const router = useRouter()
 
@@ -31,22 +31,13 @@ export default function EditFamilyPage({ params }:any) {
         console.error('Error fetching family members:', membersError)
         return
       }
-      console.log(members);
+
       setFamilyData({
         ...family,
-        familyCode: family.family_code,
-        nativePlace: family.native_place,
         members: members.map(member => ({
           ...member,
           dateOfBirth: new Date(member.date_of_birth),
           marriedToOtherSamaj: member.married_to_other_samaj,
-          firstName: member.first_name,
-          middleName: member.middle_name,
-          lastName: member.last_name,
-          maritalStatus: member.marital_status,
-          jobRole: member.job_role,
-          jobAddress: member.job_address,
-          mobileNumber: member.mobile_number,
         })),
       })
     }

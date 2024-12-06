@@ -11,38 +11,37 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
 import { supabase } from '@/lib/supabase'
 import * as XLSX from 'xlsx'
 
 const familyMemberSchema = z.object({
-  firstName: z.string().min(1, { message: "First name is required" }),
+  firstName: z.string().min(1, { message: "પ્રથમ નામ આવશ્યક છે" }),
   middleName: z.string().optional(),
-  lastName: z.string().min(1, { message: "Surname is required" }),
-  relation: z.string().min(1, { message: "Relation is required" }),
-  dateOfBirth: z.date({ required_error: "Date of birth is required" }),
-  maritalStatus: z.string().min(1, { message: "Marital status is required" }),
+  lastName: z.string().min(1, { message: "અટક આવશ્યક છે" }),
+  relation: z.string().min(1, { message: "સંબંધ આવશ્યક છે" }),
+  dateOfBirth: z.date({ required_error: "જન્મ તારીખ આવશ્યક છે" }),
+  maritalStatus: z.string().min(1, { message: "વૈવાહિક સ્થિતિ આવશ્યક છે" }),
   marriedToOtherSamaj: z.boolean(),
-  education: z.string().min(1, { message: "Education is required" }),
+  education: z.string().min(1, { message: "શિક્ષણ આવશ્યક છે" }),
   mobileNumber: z.string().optional(),
-  email: z.string().email({ message: "Invalid email address" }).optional().or(z.literal('')),
+  email: z.string().email({ message: "અમાન્ય ઇમેઇલ સરનામું" }).optional().or(z.literal('')),
   jobRole: z.string().optional(),
   jobAddress: z.string().optional(),
   id: z.number().optional()
 })
 
 const familySchema = z.object({
-  familyCode: z.string().min(1, { message: "Family Code is required" }),
-  address: z.string().min(1, { message: "Address is required" }),
-  nativePlace: z.string().min(1, { message: "Native place is required" }),
-  gotra: z.string().min(1, { message: "Gotra is required" }),
+  familyCode: z.string().min(1, { message: "કુટુંબ કોડ આવશ્યક છે" }),
+  address: z.string().min(1, { message: "સરનામું આવશ્યક છે" }),
+  nativePlace: z.string().min(1, { message: "મૂળ વતન આવશ્યક છે" }),
+  gotra: z.string().min(1, { message: "ગોત્ર આવશ્યક છે" }),
   members: z.array(familyMemberSchema)
-    .min(1, { message: "At least one family member is required" })
+    .min(1, { message: "ઓછામાં ઓછા એક કુટુંબના સભ્ય આવશ્યક છે" })
     .refine(
       (members) => members.filter((member) => member.relation === "Self").length === 1,
-      { message: "Exactly one member must be designated as the Main Member (Self)" }
+      { message: "ચોક્કસ એક સભ્યને મુખ્ય સભ્ય (પોતે) તરીકે નિયુક્ત કરવો આવશ્યક છે" }
     ),
   id: z.number().optional()
 })
@@ -50,19 +49,27 @@ const familySchema = z.object({
 type FamilyFormData = z.infer<typeof familySchema>
 
 const relationOptions = [
-  "Self",
-  "Father",
-  "Mother",
-  "Daughter",
-  "Daughter-in-Law",
-  "Grandson",
-  "Granddaughter",
-  "Son",
-  "Son-in-Law",
-  "Wife",
-  "Husband",
-  "Brother",
-  "Sister"
+  "પોતે",
+  "પિતા",
+  "માતા",
+  "પુત્રી",
+  "પુત્રવધૂ",
+  "પૌત્ર",
+  "પૌત્રી",
+  "પુત્ર",
+  "જમાઈ",
+  "પત્ની",
+  "પતિ",
+  "ભાઈ",
+  "બહેન"
+]
+
+const maritalStatusOptions = [
+  "અપરિણીત",
+  "પરિણીત",
+  "છૂટાછેડા",
+  "વિધવા",
+  "વિધુર"
 ]
 
 interface FamilyDirectoryFormProps {
@@ -81,7 +88,7 @@ export default function FamilyDirectoryForm({ initialData, onSuccess }: FamilyDi
       address: '',
       nativePlace: '',
       gotra: '',
-      members: [{ relation: 'Self', firstName: '', lastName: '', dateOfBirth: new Date(), maritalStatus: '', marriedToOtherSamaj: false, education: '' }],
+      members: [{ relation: 'પોતે', firstName: '', lastName: '', dateOfBirth: new Date(), maritalStatus: '', marriedToOtherSamaj: false, education: '' }],
     },
   })
 
@@ -93,7 +100,6 @@ export default function FamilyDirectoryForm({ initialData, onSuccess }: FamilyDi
   const watchMembers = watch("members")
 
   const onSubmit = async (data: FamilyFormData) => {
-    console.log('Submitting family data:', data)
     setIsSubmitting(true)
     try {
       if (initialData) {
@@ -194,13 +200,13 @@ export default function FamilyDirectoryForm({ initialData, onSuccess }: FamilyDi
         if (membersError) throw membersError
       }
 
-      alert('Family details submitted successfully!')
+      alert('કુટુંબની વિગતો સફળતાપૂર્વક સબમિટ થઈ!')
       if (onSuccess) {
         onSuccess()
       }
     } catch (error) {
-      console.error('Error submitting family details:', error)
-      alert('An error occurred while submitting family details.')
+      console.error('કુટુંબની વિગતો સબમિટ કરતી વખતે ભૂલ:', error)
+      alert('કુટુંબની વિગતો સબમિટ કરતી વખતે એક ભૂલ આવી.')
     } finally {
       setIsSubmitting(false)
     }
@@ -227,34 +233,34 @@ export default function FamilyDirectoryForm({ initialData, onSuccess }: FamilyDi
       const excelData = members.map(member => {
         const family = families.find(f => f.id === member.family_id)
         return {
-          'Family Code': family?.family_code,
-          'Family Address': family?.address,
-          'Native Place': family?.native_place,
-          'Gotra': family?.gotra,
-          'First Name': member.first_name,
-          'Middle Name': member.middle_name,
-          'Surname': member.last_name,
-          'Relation': member.relation,
-          'Date of Birth': member.date_of_birth,
-          'Marital Status': member.marital_status,
-          'Married to Other Samaj': member.married_to_other_samaj ? 'Yes' : 'No',
-          'Education': member.education,
-          'Mobile Number': member.mobile_number,
-          'Email': member.email,
-          'Job Role': member.job_role,
-          'Job Address': member.job_address,
+          'કુટુંબ કોડ': family?.family_code,
+          'કુટુંબનું સરનામું': family?.address,
+          'મૂળ વતન': family?.native_place,
+          'ગોત્ર': family?.gotra,
+          'પ્રથમ નામ': member.first_name,
+          'મધ્ય નામ': member.middle_name,
+          'અટક': member.last_name,
+          'સંબંધ': member.relation,
+          'જન્મ તારીખ': member.date_of_birth,
+          'વૈવાહિક સ્થિતિ': member.marital_status,
+          'અન્ય સમાજમાં લગ્ન': member.married_to_other_samaj ? 'હા' : 'ના',
+          'શિક્ષણ': member.education,
+          'મોબાઇલ નંબર': member.mobile_number,
+          'ઇમેઇલ': member.email,
+          'નોકરીની ભૂમિકા': member.job_role,
+          'નોકરીનું સરનામું': member.job_address,
         }
       })
 
       // Create Excel file
       const worksheet = XLSX.utils.json_to_sheet(excelData)
       const workbook = XLSX.utils.book_new()
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Family Directory')
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'કુટુંબ નિર્દેશિકા')
       XLSX.writeFile(workbook, 'family_directory.xlsx')
 
     } catch (error) {
-      console.error('Error exporting data:', error)
-      alert('An error occurred while exporting data.')
+      console.error('ડેટા નિકાસ કરતી વખતે ભૂલ:', error)
+      alert('ડેટા નિકાસ કરતી વખતે એક ભૂલ આવી.')
     } finally {
       setIsExporting(false)
     }
@@ -264,18 +270,18 @@ export default function FamilyDirectoryForm({ initialData, onSuccess }: FamilyDi
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       <Card>
         <CardHeader>
-          <CardTitle>Family Directory - Admin Panel</CardTitle>
+          <CardTitle>કુટુંબ નિર્દેશિકા - એડમિન પેનલ</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Family Information</h3>
+            <h3 className="text-lg font-medium">કુટુંબની માહિતી</h3>
             <div className="space-y-2">
-              <Label htmlFor="familyCode">Family Code</Label>
+              <Label htmlFor="familyCode">કુટુંબ કોડ</Label>
               <div className="flex space-x-2">
                 <Input 
                   id="familyCode" 
                   {...register("familyCode")} 
-                  placeholder="Enter Family Code"
+                  placeholder="કુટુંબ કોડ દાખલ કરો"
                 />
                 <Button 
                   type="button" 
@@ -284,52 +290,52 @@ export default function FamilyDirectoryForm({ initialData, onSuccess }: FamilyDi
                     setValue('familyCode', newFamilyCode);
                   }}
                 >
-                  Generate
+                  જનરેટ કરો
                 </Button>
               </div>
               {errors.familyCode && <p className="text-sm text-red-500">{errors.familyCode.message}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="address">Family Address</Label>
-              <Textarea id="address" {...register("address")} />
+              <Label htmlFor="address">કુટુંબનું સરનામું</Label>
+              <Textarea id="address" {...register("address")} placeholder="સરનામું દાખલ કરો" />
               {errors.address && <p className="text-sm text-red-500">{errors.address.message}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="nativePlace">Native Place</Label>
-                <Input id="nativePlace" {...register("nativePlace")} />
+                <Label htmlFor="nativePlace">મૂળ વતન</Label>
+                <Input id="nativePlace" {...register("nativePlace")} placeholder="મૂળ વતન દાખલ કરો" />
                 {errors.nativePlace && <p className="text-sm text-red-500">{errors.nativePlace.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="gotra">Gotra</Label>
-                <Input id="gotra" {...register("gotra")} />
+                <Label htmlFor="gotra">ગોત્ર</Label>
+                <Input id="gotra" {...register("gotra")} placeholder="ગોત્ર દાખલ કરો" />
                 {errors.gotra && <p className="text-sm text-red-500">{errors.gotra.message}</p>}
               </div>
             </div>
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Family Members</h3>
+            <h3 className="text-lg font-medium">કુટુંબના સભ્યો</h3>
             {fields.map((field, index) => (
               <Card key={field.id}>
                 <CardContent className="pt-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor={`members.${index}.firstName`}>First Name</Label>
-                      <Input id={`members.${index}.firstName`} {...register(`members.${index}.firstName`)} />
+                      <Label htmlFor={`members.${index}.firstName`}>પ્રથમ નામ</Label>
+                      <Input id={`members.${index}.firstName`} {...register(`members.${index}.firstName`)} placeholder="પ્રથમ નામ દાખલ કરો" />
                       {errors.members?.[index]?.firstName && <p className="text-sm text-red-500">{errors.members[index]?.firstName?.message}</p>}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor={`members.${index}.middleName`}>Middle Name</Label>
-                      <Input id={`members.${index}.middleName`} {...register(`members.${index}.middleName`)} />
+                      <Label htmlFor={`members.${index}.middleName`}>મધ્ય નામ</Label>
+                      <Input id={`members.${index}.middleName`} {...register(`members.${index}.middleName`)} placeholder="મધ્ય નામ દાખલ કરો" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor={`members.${index}.lastName`}>Surname</Label>
-                      <Input id={`members.${index}.lastName`} {...register(`members.${index}.lastName`)} />
+                      <Label htmlFor={`members.${index}.lastName`}>અટક</Label>
+                      <Input id={`members.${index}.lastName`} {...register(`members.${index}.lastName`)} placeholder="અટક દાખલ કરો" />
                       {errors.members?.[index]?.lastName && <p className="text-sm text-red-500">{errors.members[index]?.lastName?.message}</p>}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor={`members.${index}.relation`}>Relation to Main Member</Label>
+                      <Label htmlFor={`members.${index}.relation`}>મુખ્ય સભ્ય સાથેનો સંબંધ</Label>
                       <Controller
                         name={`members.${index}.relation`}
                         control={control}
@@ -337,11 +343,10 @@ export default function FamilyDirectoryForm({ initialData, onSuccess }: FamilyDi
                           <Select 
                             onValueChange={(value) => {
                               field.onChange(value)
-                              if (value === 'Self') {
-                                // If this member is set to 'Self', set all others to a different relation
+                              if (value === 'પોતે') {
                                 watchMembers.forEach((member, i) => {
-                                  if (i !== index && member.relation === 'Self') {
-                                    setValue(`members.${i}.relation`, 'Other')
+                                  if (i !== index && member.relation === 'પોતે') {
+                                    setValue(`members.${i}.relation`, 'અન્ય')
                                   }
                                 })
                               }
@@ -349,7 +354,7 @@ export default function FamilyDirectoryForm({ initialData, onSuccess }: FamilyDi
                             defaultValue={field.value}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="Select relation" />
+                              <SelectValue placeholder="સંબંધ પસંદ કરો" />
                             </SelectTrigger>
                             <SelectContent>
                               {relationOptions.map((option) => (
@@ -364,7 +369,7 @@ export default function FamilyDirectoryForm({ initialData, onSuccess }: FamilyDi
                       {errors.members?.[index]?.relation && <p className="text-sm text-red-500">{errors.members[index]?.relation?.message}</p>}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor={`members.${index}.dateOfBirth`}>Date of Birth</Label>
+                      <Label htmlFor={`members.${index}.dateOfBirth`}>જન્મ તારીખ</Label>
                       <Controller
                         control={control}
                         name={`members.${index}.dateOfBirth`}
@@ -374,6 +379,7 @@ export default function FamilyDirectoryForm({ initialData, onSuccess }: FamilyDi
                             onChange={(date) => field.onChange(date)}
                             dateFormat="yyyy-MM-dd"
                             className="w-full p-2 border rounded"
+                            placeholderText="જન્મ તારીખ પસંદ કરો"
                             showYearDropdown
                             scrollableYearDropdown
                             yearDropdownItemNumber={100}
@@ -383,19 +389,25 @@ export default function FamilyDirectoryForm({ initialData, onSuccess }: FamilyDi
                       {errors.members?.[index]?.dateOfBirth && <p className="text-sm text-red-500">{errors.members[index]?.dateOfBirth?.message}</p>}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor={`members.${index}.maritalStatus`}>Marital Status</Label>
-                      <Select onValueChange={(value) => setValue(`members.${index}.maritalStatus`, value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select marital status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Single">Single</SelectItem>
-                          <SelectItem value="Married">Married</SelectItem>
-                          <SelectItem value="Divorced">Divorced</SelectItem>
-                          <SelectItem value="Widow">Widow</SelectItem>
-                          <SelectItem value="Widower">Widower</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label htmlFor={`members.${index}.maritalStatus`}>વૈવાહિક સ્થિતિ</Label>
+                      <Controller
+                        name={`members.${index}.maritalStatus`}
+                        control={control}
+                        render={({ field }) => (
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="વૈવાહિક સ્થિતિ પસંદ કરો" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {maritalStatusOptions.map((option) => (
+                                <SelectItem key={option} value={option}>
+                                  {option}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
                     </div>
                     <div className="space-y-2">
                       <div className="flex items-center space-x-2">
@@ -404,49 +416,45 @@ export default function FamilyDirectoryForm({ initialData, onSuccess }: FamilyDi
                           {...register(`members.${index}.marriedToOtherSamaj`)} 
                         />
                         <Label htmlFor={`members.${index}.marriedToOtherSamaj`}>
-                          Married to Other Samaj
+                          અન્ય સમાજમાં લગ્ન
                         </Label>
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor={`members.${index}.education`}>Education</Label>
-                      <Input id={`members.${index}.education`} {...register(`members.${index}.education`)} />
+                      <Label htmlFor={`members.${index}.education`}>શિક્ષણ</Label>
+                      <Input id={`members.${index}.education`} {...register(`members.${index}.education`)} placeholder="શિક્ષણ દાખલ કરો" />
                       {errors.members?.[index]?.education && <p className="text-sm text-red-500">{errors.members[index]?.education?.message}</p>}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor={`members.${index}.mobileNumber`}>Mobile Number</Label>
-                      <Input id={`members.${index}.mobileNumber`} {...register(`members.${index}.mobileNumber`)} />
+                      <Label htmlFor={`members.${index}.mobileNumber`}>મોબાઇલ નંબર</Label>
+                      <Input id={`members.${index}.mobileNumber`} {...register(`members.${index}.mobileNumber`)} placeholder="મોબાઇલ નંબર દાખલ કરો" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor={`members.${index}.email`}>Email</Label>
-                      <Input id={`members.${index}.email`} {...register(`members.${index}.email`)} />
+                      <Label htmlFor={`members.${index}.email`}>ઇમેઇલ</Label>
+                      <Input id={`members.${index}.email`} {...register(`members.${index}.email`)} placeholder="ઇમેઇલ દાખલ કરો" />
                       {errors.members?.[index]?.email && <p className="text-sm text-red-500">{errors.members[index]?.email?.message}</p>}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor={`members.${index}.jobRole`}>Job Role</Label>
-                      <Input id={`members.${index}.jobRole`} {...register(`members.${index}.jobRole`)} />
+                      <Label htmlFor={`members.${index}.jobRole`}>નોકરીની ભૂમિકા</Label>
+                      <Input id={`members.${index}.jobRole`} {...register(`members.${index}.jobRole`)} placeholder="નોકરીની ભૂમિકા દાખલ કરો" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor={`members.${index}.jobAddress`}>Job Address</Label>
-                      <Input id={`members.${index}.jobAddress`} {...register(`members.${index}.jobAddress`)} />
+                      <Label htmlFor={`members.${index}.jobAddress`}>નોકરીનું સરનામું</Label>
+                      <Input id={`members.${index}.jobAddress`} {...register(`members.${index}.jobAddress`)} placeholder="નોકરીનું સરનામું દાખલ કરો" />
                     </div>
                   </div>
                 </CardContent>
                 <CardFooter>
                   {index > 0 && (
                     <Button type="button" variant="destructive" onClick={() => remove(index)}>
-                      Remove Member
+                      સભ્ય દૂર કરો
                     </Button>
                   )}
                 </CardFooter>
               </Card>
             ))}
-            <Button type="button" variant="outline" onClick={() => append({
-              relation: '', maritalStatus: '', marriedToOtherSamaj: false,
-              
-              
-             } as any)}>
-              Add Another Member
+            <Button type="button" variant="outline" onClick={() => append({ relation: '', maritalStatus: '', marriedToOtherSamaj: false } as any)}>
+              બીજો સભ્ય ઉમેરો
             </Button>
           </div>
         </CardContent>
@@ -456,10 +464,10 @@ export default function FamilyDirectoryForm({ initialData, onSuccess }: FamilyDi
           )}
           <div className="flex space-x-2">
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting...' : 'Submit Family Details'}
+              {isSubmitting ? 'સબમિટ થઈ રહ્યું છે...' : 'કુટુંબની વિગતો સબમિટ કરો'}
             </Button>
             <Button type="button" variant="secondary" onClick={exportDataAsExcel} disabled={isExporting}>
-              {isExporting ? 'Exporting...' : 'Export Data as Excel'}
+              {isExporting ? 'નિકાસ થઈ રહ્યો છે...' : 'ડેટાને એક્સેલ તરીકે નિકાસ કરો'}
             </Button>
           </div>
         </CardFooter>
