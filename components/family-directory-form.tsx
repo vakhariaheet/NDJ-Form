@@ -56,7 +56,7 @@ const familySchema = z.object({
 		.min(1, { message: 'ઓછામાં ઓછા એક કુટુંબના સભ્ય આવશ્યક છે' })
 		.refine(
 			(members) =>
-				members.filter((member) => member.relation === 'Self').length === 1,
+				members.filter((member) => member.relation === 'પોતે').length === 1,
 			{
 				message:
 					'ચોક્કસ એક સભ્યને મુખ્ય સભ્ય (પોતે) તરીકે નિયુક્ત કરવો આવશ્યક છે',
