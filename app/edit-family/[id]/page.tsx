@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import FamilyDirectoryForm from '@/components/family-directory-form'
 import { supabase } from '@/lib/supabase'
 
-export default function EditFamilyPage({ params }: { params: { id: string } }) {
+export default function EditFamilyPage({ params }: any) {
   const [familyData, setFamilyData] = useState(null)
   const router = useRouter()
 
