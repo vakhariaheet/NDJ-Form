@@ -470,7 +470,7 @@ export default function FamilyDirectoryForm({
 								<CardContent className='pt-6'>
 									<div className='grid grid-cols-2 gap-4'>
 										<div className='space-y-2'>
-											<Label htmlFor={`members.${index}.name`}>નામ</Label>
+											<Label htmlFor={`members.${index}.name`}>નામ - પિતાનું નામ - અટક  </Label>
 											<Input
 												id={`members.${index}.name`}
 												{...register(`members.${index}.name`)}
