@@ -24,9 +24,11 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import DatePicker from 'react-datepicker';
+import {} from './ui/toast';
 import 'react-datepicker/dist/react-datepicker.css';
 import { supabase } from '@/lib/supabase';
 import * as XLSX from 'xlsx';
+import { useToast } from '@/hooks/use-toast';
 
 const familyMemberSchema = z.object({
 	name: z.string().min(1, { message: 'નામ આવશ્યક છે' }),
@@ -164,7 +166,7 @@ export default function FamilyDirectoryForm({
 }: FamilyDirectoryFormProps) {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [isExporting, setIsExporting] = useState(false);
-
+	const { toast } = useToast();
 	const {
 		register,
 		control,
@@ -293,14 +295,29 @@ export default function FamilyDirectoryForm({
 
 				if (membersError) throw membersError;
 			}
+			toast({
+				title: 'સફળતા!',
+				description: 'કુટુંબની વિગતો સફળતાપૂર્વક સબમિટ થઈ!',
+				duration: 5000,
+			});
 
-			alert('કુટુંબની વિગતો સફળતાપૂર્વક સબમિટ થઈ!');
 			if (onSuccess) {
 				onSuccess();
 			}
-		} catch (error) {
+		} catch (error: any) {
 			console.error('કુટુંબની વિગતો સબમિટ કરતી વખતે ભૂલ:', error);
-			alert('કુટુંબની વિગતો સબમિટ કરતી વખતે એક ભૂલ આવી.');
+			if (error?.code === '23505') {
+				toast({
+					title: 'ભૂલ!',
+					description: 'આ કુટુંબ કોડ પહેલેથી ઉપયોગમાં છે!',
+					duration: 5000,
+				});
+			} else
+				toast({
+					title: 'ભૂલ!',
+					description: 'કુટુંબની વિગતો સબમિટ કરવામાં ભૂલ આવી!',
+					duration: 5000,
+				});
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -326,21 +343,21 @@ export default function FamilyDirectoryForm({
 			// Prepare data for Excel
 			const excelData = members.map((member) => {
 				const family = families.find((f) => f.id === member.family_id);
-        return {
-          'કુટુંબ કોડ': family?.family_code,
-          'કુટુંબનું સરનામું': family?.address,
-          'મૂળ વતન': family?.native_place,
-          ગોત્ર: family?.gotra,
-          'પ્રથમ નામ': member.name,
-          'સંબંધ': member.relation,
-          'જન્મ તારીખ': member.date_of_birth,
-          'વૈવાહિક સ્થિતિ': member.marital_status,
-          'અન્ય સમાજમાં લગ્ન': member.married_to_other_samaj ? 'હા' : 'ના',
-          શિક્ષણ: member.education,
-          'મોબાઇલ નંબર': member.mobile_number,
-          ઇમેઇલ: member.email,
-          'નોકરીની ભૂમિકા': member.job_role,
-          'નોકરીનું સરનામું': member.job_address,
+				return {
+					'કુટુંબ કોડ': family?.family_code,
+					'કુટુંબનું સરનામું': family?.address,
+					'મૂળ વતન': family?.native_place,
+					ગોત્ર: family?.gotra,
+					'પ્રથમ નામ': member.name,
+					સંબંધ: member.relation,
+					'જન્મ તારીખ': member.date_of_birth,
+					'વૈવાહિક સ્થિતિ': member.marital_status,
+					'અન્ય સમાજમાં લગ્ન': member.married_to_other_samaj ? 'હા' : 'ના',
+					શિક્ષણ: member.education,
+					'મોબાઇલ નંબર': member.mobile_number,
+					ઇમેઇલ: member.email,
+					'નોકરીની ભૂમિકા': member.job_role,
+					'નોકરીનું સરનામું': member.job_address,
 				};
 			});
 
@@ -351,7 +368,11 @@ export default function FamilyDirectoryForm({
 			XLSX.writeFile(workbook, 'family_directory.xlsx');
 		} catch (error) {
 			console.error('ડેટા નિકાસ કરતી વખતે ભૂલ:', error);
-			alert('ડેટા નિકાસ કરતી વખતે એક ભૂલ આવી.');
+			toast({
+				title: 'ભૂલ!',
+				description: 'ડેટા નિકાસ કરવામાં ભૂલ આવી!',
+				duration: 5000,
+			});
 		} finally {
 			setIsExporting(false);
 		}
@@ -471,7 +492,9 @@ export default function FamilyDirectoryForm({
 								<CardContent className='pt-6'>
 									<div className='grid grid-cols-2 gap-4'>
 										<div className='space-y-2'>
-											<Label htmlFor={`members.${index}.name`}>નામ - પિતાનું નામ - અટક  </Label>
+											<Label htmlFor={`members.${index}.name`}>
+												નામ - પિતાનું નામ - અટક{' '}
+											</Label>
 											<Input
 												id={`members.${index}.name`}
 												{...register(`members.${index}.name`)}
@@ -576,7 +599,12 @@ export default function FamilyDirectoryForm({
 														</SelectContent>
 													</Select>
 												)}
-											/>
+                      />
+                      {errors.members?.[index]?.maritalStatus && (
+												<p className='text-sm text-red-500'>
+													{errors.members[index]?.maritalStatus?.message}
+												</p>
+											)}
 										</div>
 										<div className='space-y-2'>
 											<div className='flex items-center space-x-2'>
