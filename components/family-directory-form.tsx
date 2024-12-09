@@ -326,20 +326,21 @@ export default function FamilyDirectoryForm({
 			// Prepare data for Excel
 			const excelData = members.map((member) => {
 				const family = families.find((f) => f.id === member.family_id);
-				return {
-					'કુટુંબ કોડ': family?.family_code,
-					'કુટુંબનું સરનામું': family?.address,
-					'મૂળ વતન': family?.native_place,
-					ગોત્ર: family?.gotra,
-					'પ્રથમ નામ': member.name,
-					'જન્મ તારીખ': member.date_of_birth,
-					'વૈવાહિક સ્થિતિ': member.marital_status,
-					'અન્ય સમાજમાં લગ્ન': member.married_to_other_samaj ? 'હા' : 'ના',
-					શિક્ષણ: member.education,
-					'મોબાઇલ નંબર': member.mobile_number,
-					ઇમેઇલ: member.email,
-					'નોકરીની ભૂમિકા': member.job_role,
-					'નોકરીનું સરનામું': member.job_address,
+        return {
+          'કુટુંબ કોડ': family?.family_code,
+          'કુટુંબનું સરનામું': family?.address,
+          'મૂળ વતન': family?.native_place,
+          ગોત્ર: family?.gotra,
+          'પ્રથમ નામ': member.name,
+          'સંબંધ': member.relation,
+          'જન્મ તારીખ': member.date_of_birth,
+          'વૈવાહિક સ્થિતિ': member.marital_status,
+          'અન્ય સમાજમાં લગ્ન': member.married_to_other_samaj ? 'હા' : 'ના',
+          શિક્ષણ: member.education,
+          'મોબાઇલ નંબર': member.mobile_number,
+          ઇમેઇલ: member.email,
+          'નોકરીની ભૂમિકા': member.job_role,
+          'નોકરીનું સરનામું': member.job_address,
 				};
 			});
 

@@ -13,9 +13,7 @@ CREATE TABLE families (
 CREATE TABLE family_members (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   family_id UUID NOT NULL REFERENCES families(id) ON DELETE CASCADE,
-  first_name TEXT NOT NULL,
-  middle_name TEXT,
-  last_name TEXT NOT NULL,
+  name TEXT NOT NULL,
   relation TEXT NOT NULL,
   date_of_birth DATE NOT NULL,
   marital_status TEXT NOT NULL,
