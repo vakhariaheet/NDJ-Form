@@ -5,9 +5,7 @@ import { Button } from "@/components/ui/button"
 
 interface FamilyMember {
   id: string;
-  first_name: string;
-  middle_name: string | null;
-  last_name: string;
+  name: string;
   relation: string;
   date_of_birth: string;
   marital_status: string;
@@ -53,7 +51,7 @@ export default function FamilyTable({ families, searchQuery, onFamilySelect, onE
 
   const getMainMemberName = (family: Family) => {
     const mainMember = family.members.find(member => member.relation === 'Self')
-    return mainMember ? `${mainMember.first_name} ${mainMember.last_name}` : 'N/A'
+    return mainMember ? mainMember.name : 'N/A'
   }
 
   return (

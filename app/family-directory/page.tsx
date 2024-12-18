@@ -9,9 +9,7 @@ import { supabase } from '@/lib/supabase'
 
 interface FamilyMember {
   id: string;
-  first_name: string;
-  middle_name: string | null;
-  last_name: string;
+  name: string;
   relation: string;
   date_of_birth: string;
   marital_status: string;
@@ -85,7 +83,7 @@ export default function FamilyDirectoryPage() {
       return (
         family.family_code.toLowerCase().includes(searchLower) ||
         family.members.some((member) =>
-          `${member.first_name} ${member.last_name}`.toLowerCase().includes(searchLower) ||
+          member.name.toLowerCase().includes(searchLower) ||
           member.relation.toLowerCase().includes(searchLower) ||
           (member.email && member.email.toLowerCase().includes(searchLower)) ||
           (member.job_role && member.job_role.toLowerCase().includes(searchLower))

@@ -7,9 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface FamilyMember {
   id: string;
-  first_name: string;
-  middle_name: string | null;
-  last_name: string;
+  name: string;
   relation: string;
   date_of_birth: string;
   marital_status: string;
@@ -44,11 +42,11 @@ export default function FamilyDetailsPopup({ family, onClose }: FamilyDetailsPop
 
     return (
       <div className="family-tree">
-        <div className="main-member">{`${mainMember.first_name} ${mainMember.last_name}`}</div>
+        <div className="main-member">{mainMember.name}</div>
         <div className="other-members">
           {members.filter(m => m.relation !== 'Self').map(member => (
             <div key={member.id} className="member">
-              <div>{`${member.first_name} ${member.last_name}`}</div>
+              <div>{member.name}</div>
               <div>({member.relation})</div>
             </div>
           ))}
@@ -86,7 +84,7 @@ export default function FamilyDetailsPopup({ family, onClose }: FamilyDetailsPop
               <h3 className="text-lg font-semibold">Family Members</h3>
               {family.members.map((member) => (
                 <div key={member.id} className="mb-4 p-4 border rounded">
-                  <h4 className="text-md font-semibold">{`${member.first_name} ${member.last_name} (${member.relation})`}</h4>
+                  <h4 className="text-md font-semibold">{`${member.name} (${member.relation})`}</h4>
                   <div className="grid grid-cols-2 gap-2">
                     <p><strong>Date of Birth:</strong> {new Date(member.date_of_birth).toLocaleDateString()}</p>
                     <p><strong>Marital Status:</strong> {member.marital_status}</p>
