@@ -34,10 +34,14 @@ export default function EditFamilyPage({ params }: any) {
 
       setFamilyData({
         ...family,
+        familyCode: family.family_code,
+        nativePlace: family.native_place,
+        gotra: family.gotra,
         members: members.map(member => ({
           ...member,
           dateOfBirth: new Date(member.date_of_birth),
           marriedToOtherSamaj: member.married_to_other_samaj,
+          maritalStatus: member.marital_status,
         })),
       })
     }

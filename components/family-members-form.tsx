@@ -69,9 +69,9 @@ export default function FamilyMembersForm() {
                   {...register(`members.${index}.name`)}
                   placeholder='પૂરું નામ દાખલ કરો'
                 />
-                {errors.members?.[index]?.name && (
+                {(errors.members as any)?.[index]?.name && (
                   <p className='text-sm text-red-500'>
-                    {errors.members[index]?.name?.message}
+                    {(errors.members as any)?.name?.message}
                   </p>
                 )}
               </div>
@@ -87,7 +87,7 @@ export default function FamilyMembersForm() {
                       onValueChange={(value) => {
                         field.onChange(value);
                         if (value === 'પોતે') {
-                          watchMembers.forEach((member, i) => {
+                          watchMembers.forEach((member:any, i:number) => {
                             if (i !== index && member.relation === 'પોતે') {
                               setValue(`members.${i}.relation`, 'અન્ય');
                             }
@@ -109,9 +109,9 @@ export default function FamilyMembersForm() {
                     </Select>
                   )}
                 />
-                {errors.members?.[index]?.relation && (
+                {(errors.members as any)?.[index]?.relation && (
                   <p className='text-sm text-red-500'>
-                    {errors.members[index]?.relation?.message}
+                    {(errors.members as any)?.relation?.message}
                   </p>
                 )}
               </div>
@@ -135,9 +135,9 @@ export default function FamilyMembersForm() {
                     />
                   )}
                 />
-                {errors.members?.[index]?.dateOfBirth && (
+                {(errors.members as any)?.[index]?.dateOfBirth && (
                   <p className='text-sm text-red-500'>
-                    {errors.members[index]?.dateOfBirth?.message}
+                    {(errors.members as any)?.[index]?.dateOfBirth?.message}
                   </p>
                 )}
               </div>
@@ -166,9 +166,9 @@ export default function FamilyMembersForm() {
                     </Select>
                   )}
                 />
-                {errors.members?.[index]?.maritalStatus && (
+                {(errors.members as any)?.[index]?.maritalStatus && (
                   <p className='text-sm text-red-500'>
-                    {errors.members[index]?.maritalStatus?.message}
+                    {(errors.members as any)?.[index]?.maritalStatus?.message}
                   </p>
                 )}
               </div>
@@ -192,9 +192,9 @@ export default function FamilyMembersForm() {
                   {...register(`members.${index}.education`)}
                   placeholder='શિક્ષણ દાખલ કરો'
                 />
-                {errors.members?.[index]?.education && (
+                {(errors.members as any)?.[index]?.education && (
                   <p className='text-sm text-red-500'>
-                    {errors.members[index]?.education?.message}
+                    {(errors.members as any)?.[index]?.education?.message}
                   </p>
                 )}
               </div>
@@ -215,9 +215,9 @@ export default function FamilyMembersForm() {
                   {...register(`members.${index}.email`)}
                   placeholder='ઇમેઇલ દાખલ કરો'
                 />
-                {errors.members?.[index]?.email && (
+                {(errors.members as any)?.[index]?.email && (
                   <p className='text-sm text-red-500'>
-                    {errors.members[index]?.email?.message}
+                    {(errors.members as any)?.[index]?.email?.message}
                   </p>
                 )}
               </div>
