@@ -50,7 +50,7 @@ export default function FamilyTable({ families, searchQuery, onFamilySelect, onE
   }
 
   const getMainMemberName = (family: Family) => {
-    const mainMember = family.members.find(member => member.relation === 'Self')
+    const mainMember = family.members.find(member => member.relation === 'પોતે')
     return mainMember ? mainMember.name : 'N/A'
   }
 
